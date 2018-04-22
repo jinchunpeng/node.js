@@ -1,6 +1,7 @@
 var http = require("http");
 var url  = require("url");
 var fs   = require('fs');
+var staticModule = require("./static_module");
 
 /*
 function start(route, handle){
@@ -14,49 +15,6 @@ function start(route, handle){
     console.log("server has started.");
 }
 */
-
-
-function dealWithStatic(pathname, readPath, response)
-{
-    console.log("pathname:" + pathname + ", readPath:" + readPath);
-    fs.exists(readPath, function(exists){        //判断文件是否存在
-        if(!exists)
-        {
-            response.writeHead(404,  {"Content-Type": "text/plain"});
-            response.write("This request URL " + pathname + " was not found on this server.");
-            response.end();
-        }
-        else
-        {
-            var pointPosition = pathname.lastIndexOf('.'),
-                mmineString   = pathname.substring(pointPosition+1),
-                mmieType;
-            switch(mmineString){
-                case 'css': mmieType = 'text/css';
-                    break;
-                case 'png': mmieType = 'image/png';                                                                                                                                                                                                     
-                    break;
-                case 'jpg': mmieType = 'image/jpg';
-                    break;
-                default:
-                    mmieType = 'text/plain'; 
-            }
-
-            fs.readFile(readPath, "binary", function(err, file){
-                if (err){
-                    response.writeHead(500, {"Content-Type": "text/plain"});
-                    response.end(err); 
-                }
-                else
-                {
-                    response.writeHead(200, {"Content-Type": mmieType});
-                    response.write(file, "binary");
-                    response.end();
-                }
-            });
-        }
-    });
-}
 
 function goIndex(response)
 {
@@ -86,7 +44,7 @@ function start(route, handle)
         }
         else
         {
-            dealWithStatic(pathname, readPath, response);
+            staticModule.getStaticFile(pathname , response);
         }
     }
     http.createServer(onRequest).listen(80);

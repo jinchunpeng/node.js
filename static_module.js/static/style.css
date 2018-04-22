@@ -1,3 +1,12 @@
+@charset "utf-8";
+
 div{
     color: red;
+}
+
+img {
+    position:relative;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
 }
